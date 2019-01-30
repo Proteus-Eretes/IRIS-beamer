@@ -1,17 +1,21 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <BeamerPanel :settings={settings} />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import BeamerPanel from './components/BeamerPanel.vue'
+import {BeamerSettings} from './services/BeamerSettings.js';
+
+const beamerSettings = new BeamerSettings('test', 'http://localhost:8080');
+
+const settings = beamerSettings.getBeamerPreset();
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+      BeamerPanel
   }
 }
 </script>
