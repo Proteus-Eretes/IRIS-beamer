@@ -1,7 +1,8 @@
 export class BeamerSettings {
 
     /**
-     * @param {string} name
+     * @param {string} name - The name of preset which we are looking at.
+     * @param {string} baseUrl - Url where the IRIS system is running.
      */
     constructor(name, baseUrl) {
         this.name = name;
@@ -19,13 +20,18 @@ export class BeamerSettings {
     }
 
     _getPreset() {
-        return fetch(this.baseUrl + '/beamer/getPreset/' + this.name)
+        return fetch(this.baseUrl + '/beamer/getPreset/' + this.name, {
+            'method': 'POST'
+        })
             .then(response => {
                 if (response.status !== 200) {
                     return null;
                 }
                 return response.json();
-            });
+            })
+          .then(data => {
+            return data.preset;
+          });
     }
 }
 

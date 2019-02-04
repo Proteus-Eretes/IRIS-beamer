@@ -1,32 +1,38 @@
 <template>
   <div id="app">
-    <BeamerPanel :settings={settings} />
+    <beamer-panel :settings=settings />
   </div>
 </template>
 
 <script>
-import BeamerPanel from './components/BeamerPanel.vue'
-import {BeamerSettings} from './services/BeamerSettings.js';
+  import {BeamerSettings} from './services/BeamerSettings.js';
+  import BeamerPanel from './components/BeamerPanel.vue';
 
-const beamerSettings = new BeamerSettings('test', 'http://localhost:8080');
-
-const settings = beamerSettings.getBeamerPreset();
-
-export default {
-  name: 'app',
-  components: {
+  export default {
+    name: 'app',
+    components: {
       BeamerPanel
-  }
-}
+    },
+    data() {
+      return {
+        settings: {preset_name: 'aa'}
+      };
+    },
+    async mounted() {
+      const beamerSettings = new BeamerSettings('Uitslagen', 'http://localhost:8080');
+      this.settings = await beamerSettings.getBeamerPreset()
+    }
+  };
+
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
+
 </style>
