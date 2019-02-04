@@ -1,37 +1,43 @@
-export class BeamerSettings {
+import {Service} from "./Service";
+
+export class BeamerSettings extends Service {
 
     /**
+     * @inheritDoc
      * @param {string} name - The name of preset which we are looking at.
-     * @param {string} baseUrl - Url where the IRIS system is running.
      */
-    constructor(name, baseUrl) {
+    constructor(key, baseUrl, name) {
+        super(key, baseUrl);
         this.name = name;
-        this.baseUrl = baseUrl;
         this.preset = null;
+        this.regatta = null;
     }
 
 
     async getBeamerPreset() {
         if (this.preset === null) {
-            this.preset = await this._getPreset();
+            await this._init();
         }
 
         return this.preset;
     }
 
+    async getRegattaInformation() {
+        if (this.regatta === null) {
+            await this._init();
+        }
+
+        return this.regatta;
+    }
+
+    async _init() {
+        const data = await this._getPreset();
+        this.preset = data.preset;
+        this.regatta = data.regatta;
+    }
+
     _getPreset() {
-        return fetch(this.baseUrl + '/beamer/getPreset/' + this.name, {
-            'method': 'POST'
-        })
-            .then(response => {
-                if (response.status !== 200) {
-                    return null;
-                }
-                return response.json();
-            })
-          .then(data => {
-            return data.preset;
-          });
+        return this._fetch('/beamer/getPreset/' + this.name);
     }
 }
 
