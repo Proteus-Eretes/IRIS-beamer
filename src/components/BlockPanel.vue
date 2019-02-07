@@ -1,9 +1,9 @@
 <template>
-    <div>
-        <table v-for="block in blocks" class="b-table">
+    <div class="table-responsive">
+        <div v-for="block in blocks">
             <field-panel v-for="field in block" :key="field.id" :field=field :settings=settings>
             </field-panel>
-        </table>
+        </div>
     </div>
 </template>
 
