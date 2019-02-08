@@ -26,7 +26,7 @@
             };
         },
         async mounted() {
-            const resultService = new ResultService(0, 'http://localhost:8080', this.regatta.id, this.settings.id);
+            const resultService = new ResultService('app', 'http://localhost:8080', this.regatta.id, this.settings.id);
             this.blocks = await resultService.getData();
         }
     }

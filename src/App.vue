@@ -21,8 +21,12 @@
             };
         },
         async mounted() {
-            const beamerSettings = new BeamerSettings(0, 'http://localhost:8080', 'Uitslagen');
+            const beamerSettings = new BeamerSettings('app', 'http://localhost:8080', 'Uitslagen');
             this.settings = await beamerSettings.getBeamerPreset();
+            const css = document.createElement("style");
+            css.type = "text/css";
+            css.innerHTML = this.settings.css;
+            document.body.appendChild(css);
             this.regatta = await beamerSettings.getRegattaInformation();
             this.loaded = true;
         }

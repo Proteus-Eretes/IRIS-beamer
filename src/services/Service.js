@@ -14,7 +14,12 @@ export class Service {
      */
     _fetch(url) {
         return fetch(this._baseUrl + url, {
-            'method': 'POST'
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({key: this._key}),
         })
             .then(response => {
                 if (response.status !== 200) {
