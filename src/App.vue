@@ -7,6 +7,7 @@
 <script>
     import {BeamerSettings} from './services/BeamerSettings';
     import BeamerPanel from './components/BeamerPanel.vue';
+    import {ParseParams} from "./helpers/ParseParams";
 
     export default {
         name: 'app',
@@ -21,7 +22,8 @@
             };
         },
         async mounted() {
-            const beamerSettings = new BeamerSettings('app', 'http://localhost:8080', 'Uitslagen');
+            const url = new ParseParams(window.location.href);
+            const beamerSettings = new BeamerSettings(url.getKey(), url.getUrl(), 'Uitslagen');
             this.settings = await beamerSettings.getBeamerPreset();
             const css = document.createElement("style");
             css.type = "text/css";

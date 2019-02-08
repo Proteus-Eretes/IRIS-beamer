@@ -9,6 +9,7 @@
 <script>
     import {ResultService} from "../services/ResultService";
     import BlockPanel from "./BlockPanel";
+    import {ParseParams} from "../helpers/ParseParams";
 
 
     export default {
@@ -26,7 +27,8 @@
             };
         },
         async mounted() {
-            const resultService = new ResultService('app', 'http://localhost:8080', this.regatta.id, this.settings.id);
+            const url = new ParseParams(window.location.href);
+            const resultService = new ResultService(url.getKey(), url.getUrl(), this.regatta.id, this.settings.id);
             this.blocks = await resultService.getData();
         }
     }
