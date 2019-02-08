@@ -15,21 +15,21 @@
             BeamerPanel
         },
         data() {
+            const url = new ParseParams(window.location.href);
             return {
                 settings: {},
                 regatta: {},
                 loaded: false,
+                beamerSettings: new BeamerSettings(url.getKey(), url.getUrl(), 'Uitslagen'),
             };
         },
         async mounted() {
-            const url = new ParseParams(window.location.href);
-            const beamerSettings = new BeamerSettings(url.getKey(), url.getUrl(), 'Uitslagen');
-            this.settings = await beamerSettings.getBeamerPreset();
+            this.settings = await this.beamerSettings.getBeamerPreset();
             const css = document.createElement("style");
             css.type = "text/css";
             css.innerHTML = this.settings.css;
             document.body.appendChild(css);
-            this.regatta = await beamerSettings.getRegattaInformation();
+            this.regatta = await this.beamerSettings.getRegattaInformation();
             this.loaded = true;
         }
     };

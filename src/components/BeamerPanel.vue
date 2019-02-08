@@ -22,14 +22,22 @@
             regatta: {},
         },
         data() {
+            const url = new ParseParams(window.location.href);
             return {
-                blocks: []
+                blocks: [],
+                resultService: new ResultService(url.getKey(), url.getUrl(), this.regatta.id, this.settings.id),
             };
         },
         async mounted() {
-            const url = new ParseParams(window.location.href);
-            const resultService = new ResultService(url.getKey(), url.getUrl(), this.regatta.id, this.settings.id);
-            this.blocks = await resultService.getData();
+            this.blocks = await this.resultService.getData();
+            this.refreshData();
+        },
+        methods: {
+            refreshData() {
+                setInterval(async () => {
+                    this.blocks = await this.resultService.update();
+                }, 3000)
+            }
         }
     }
 </script>

@@ -8,7 +8,6 @@ export class ResultService extends Service {
      * @param {string} presetId
      */
     constructor(key, baseUrl, regattaId, presetId) {
-        console.log(regattaId);
         super(key, baseUrl);
         this.regattaId = regattaId;
         this.presetId = presetId;
@@ -27,6 +26,7 @@ export class ResultService extends Service {
     async update() {
         const data = await this._update();
         this.data = data.regatta;
+        return this.data;
     }
 
     /**
