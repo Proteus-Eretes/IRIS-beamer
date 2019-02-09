@@ -1,8 +1,7 @@
 <template>
     <div>
         <h1> {{ settings.preset_name }}</h1>
-        <block-panel :blocks=blocks :settings=settings>
-        </block-panel>
+        <block-panel :blocks=blocks :settings=settings> </block-panel>
     </div>
 </template>
 
@@ -36,7 +35,7 @@
             refreshData() {
                 setInterval(async () => {
                     this.blocks = await this.resultService.update();
-                }, 3000)
+                }, 5000)
             }
         }
     }

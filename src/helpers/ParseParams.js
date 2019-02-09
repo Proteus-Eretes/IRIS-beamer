@@ -16,4 +16,7 @@ export class ParseParams {
     getUrl() {
         return this.url.searchParams.get('apiUrl') ? this.url.searchParams.get('apiUrl') : 'https://iris.powredbyiris.nl';
     }
+    getPreset() {
+        return this.url.searchParams.get('wedstrijd');
+    }
 }

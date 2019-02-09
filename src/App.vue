@@ -20,7 +20,7 @@
                 settings: {},
                 regatta: {},
                 loaded: false,
-                beamerSettings: new BeamerSettings(url.getKey(), url.getUrl(), 'Uitslagen'),
+                beamerSettings: new BeamerSettings(url.getKey(), url.getUrl(), url.getPreset()),
             };
         },
         async mounted() {

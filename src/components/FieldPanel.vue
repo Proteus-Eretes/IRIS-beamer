@@ -1,15 +1,4 @@
 <template>
-    <table class="table">
-    <thead>
-    <tr>
-        <th class="rank fieldname">
-            {{field.fieldnameshort}}
-        </th>
-        <th :class="[column.path]" v-for="column in settings.export_columns" :key="column.id">
-            {{column.header}}
-        </th>
-    </tr>
-    </thead>
     <tbody>
     <tr v-for="crew in field.crews.teams" :key="crew.id">
         <td>
@@ -20,13 +9,14 @@
         </td>
     </tr>
     </tbody>
-    </table>
 </template>
 
 <script>
     import {Crew} from "../helpers/Crew";
+    import HeaderRow from "./HeaderRow";
 
     export default {
+        components: {HeaderRow},
         name: 'field-panel',
         props: {
             settings: {
