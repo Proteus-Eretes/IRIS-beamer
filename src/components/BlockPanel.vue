@@ -42,43 +42,56 @@
         methods: {
             refreshData() {
                 setInterval(async () => {
-                    this.beginCount = this.endCount;
-                    this.endCount += 20;
                     let blocks = await this.resultService.update();
-                    this.fields = [];
-                    let count = 0;
-                    blocks = blocks.map(block => {
-                        block = block.map((field) => {
-                            field.crewCount = field.crews.teams.length;
-                            return field;
-                        });
-                        block.crewCount = block.reduce((sum, field) => {
-                            return sum + field.crewCount;
-                        }, 0);
-                        return block;
+                    this.updateFields(blocks);
+                }, 10000)
+            },
+            updateFields(blocks) {
+                this.beginCount = this.endCount;
+                this.endCount += 20;
+                this.fields = [];
+                let count = 0;
+                blocks = blocks.map(block => {
+                    block = block.map((field) => {
+                        field.crewCount = field.crews.teams.length;
+                        return field;
                     });
-                    blocks.forEach((block) => {
-                        if (block.crewCount > this.beginCount) {
-                            this.fields.push(block);
-                            this.fields[this.fields.length - 1].forEach(field => {
+                    block.crewCount = block.reduce((sum, field) => {
+                        return sum + field.crewCount;
+                    }, 0);
+                    return block;
+                });
+                blocks.forEach((block) => {
+                    if (block.crewCount > this.beginCount) {
+                        this.fields.push(block);
+                        this.fields[this.fields.length - 1].forEach(field => {
+                            if (count + field.crewCount > this.endCount) {
+                                field.crews.teams.length = Math.min(0, count + field.crewCount - this.endCount);
+                            } else {
                                 if(count + field.crewCount > this.beginCount) {
                                     //Nothing
                                 } else {
                                     field.crews.teams.length = 0;
                                 }
-                                if (count + field.crewCount > this.endCount) {
-                                    field.crews.teams.length = Math.min(0, count + field.crewCount - this.endCount);
-                                }
+                            }
 
-                                count += field.crewCount;
-                            });
-                        }
-                    });
-                }, 10000)
+
+                            count += field.crewCount;
+                        });
+                        this.fields[this.fields.length - 1] = this.fields[this.fields.length - 1].filter(field => {
+                            return field.crews.teams.length > 0;
+                        })
+                    }
+                });
+
+                if (count < this.endCount) {
+                    this.endCount = 0;
+                }
             }
         },
         async mounted() {
-            // this.blocks = await this.resultService.getData();
+            let blocks = await this.resultService.update();
+            this.updateFields(blocks);
             this.refreshData();
         },
     }
