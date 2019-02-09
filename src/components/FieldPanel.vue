@@ -26,7 +26,8 @@
                 crews: {
                     teams: []
                 }
-            }
+            },
+            rowsAllowed: 0,
         },
         methods: {
             getCrewField(crew, column) {
@@ -34,7 +35,7 @@
             },
             getCrewRank(crew) {
                 return (new Crew(crew)).getCrewRank();
-            }
+            },
         }
     }
 </script>

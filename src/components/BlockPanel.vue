@@ -1,6 +1,6 @@
 <template>
     <table class="table">
-        <template v-for="block in blocks">
+        <template v-for="block in fields">
             <template v-for="field in block" :field=field :settings=settings>
                 <header-row :fieldname=field.fieldnameshort :settings=settings>
                 </header-row>
@@ -15,17 +15,71 @@
 <script>
     import FieldPanel from "./FieldPanel";
     import HeaderRow from "./HeaderRow";
+    import {ResultService} from "../services/ResultService";
+    import {ParseParams} from "../helpers/ParseParams";
 
     export default {
         components: {
             HeaderRow,
-            FieldPanel},
+            FieldPanel
+        },
         name: 'block-panel',
         props: {
             settings: {
                 export_columns: [],
             },
-            blocks : {},
+            regatta: {},
+        },
+        data() {
+            const url = new ParseParams(window.location.href);
+            return {
+                fields: {},
+                beginCount: 0,
+                endCount: 0,
+                resultService: new ResultService(url.getKey(), url.getUrl(), this.regatta.id, this.settings.id),
+            }
+        },
+        methods: {
+            refreshData() {
+                setInterval(async () => {
+                    this.beginCount = this.endCount;
+                    this.endCount += 20;
+                    let blocks = await this.resultService.update();
+                    this.fields = [];
+                    let count = 0;
+                    blocks = blocks.map(block => {
+                        block = block.map((field) => {
+                            field.crewCount = field.crews.teams.length;
+                            return field;
+                        });
+                        block.crewCount = block.reduce((sum, field) => {
+                            return sum + field.crewCount;
+                        }, 0);
+                        return block;
+                    });
+                    blocks.forEach((block) => {
+                        if (block.crewCount > this.beginCount) {
+                            this.fields.push(block);
+                            this.fields[this.fields.length - 1].forEach(field => {
+                                if(count + field.crewCount > this.beginCount) {
+                                    //Nothing
+                                } else {
+                                    field.crews.teams.length = 0;
+                                }
+                                if (count + field.crewCount > this.endCount) {
+                                    field.crews.teams.length = Math.min(0, count + field.crewCount - this.endCount);
+                                }
+
+                                count += field.crewCount;
+                            });
+                        }
+                    });
+                }, 10000)
+            }
+        },
+        async mounted() {
+            // this.blocks = await this.resultService.getData();
+            this.refreshData();
         },
     }
 </script>
