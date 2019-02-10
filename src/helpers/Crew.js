@@ -17,9 +17,9 @@ export class Crew {
                 const index = crew.times[round].times.length - 1;
                 const time = crew.times[round].times[index];
                 if (round === +pathElements[1] && pathElements[2] === 'finish') {
-                    return Crew._formatTime(crew, time.time + crew.times[round].bonussecond);
+                    return Crew.formatTime(time.time + crew.times[round].bonussecond);
                 } else if (pathElements[2] === 'results') {
-                    return Crew._formatTime(crew, time.time);
+                    return Crew.formatTime(time.time);
                 }
                 else {
                     return '00:00.0';
@@ -50,10 +50,9 @@ export class Crew {
 
     /**
      * formatTime a of format [h:]mm:ss.n
-     * @param {object} crew
      * @param {string} time
      */
-    static _formatTime(crew, time) {
+    static formatTime(time) {
         const momentTime = moment.unix(time).utc();
         if (momentTime.hours()) {
             return momentTime.format('HH:mm:ss.S');

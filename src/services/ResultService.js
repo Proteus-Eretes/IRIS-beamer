@@ -11,25 +11,19 @@ export class ResultService extends Service {
         super(key, baseUrl);
         this.regattaId = regattaId;
         this.presetId = presetId;
-        this.data = null;
         this.fields = [];
         this.beginCount = 0;
         this.endCount = 0;
     }
 
-    async getData() {
-        if (!this.data) {
-            const data = await this._update();
-            this.data = data.regatta;
-        }
-
-        return this.data;
+    async getLastResults() {
+        const data = await this._updateLastResults();
+        return data.regatta;
     }
 
     async update() {
         const data = await this._update();
-        this.data = data.regatta;
-        return this.data;
+        return data.regatta;
     }
 
     /**
@@ -37,6 +31,10 @@ export class ResultService extends Service {
      */
     _update() {
         return this._fetch(`/beamer/getRegattaData/${this.regattaId}/${this.presetId}`);
+    }
+
+    _updateLastResults() {
+        return this._fetch(`/beamer/getLastResults/${this.regattaId}/${this.presetId}`);
     }
 
     getNextPage(blocks) {

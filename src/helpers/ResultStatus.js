@@ -50,7 +50,7 @@ export class ResultStatus {
 
     static getLabel(status) {
         if (ResultStatus.isExcluded(status)) {
-            return 'excluded';
+            return 'Excluded';
         }
 
         if (ResultStatus.isDisqualified(status)) {

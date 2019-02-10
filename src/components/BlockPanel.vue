@@ -1,7 +1,37 @@
 <template>
     <div>
         <progress-bar ref="topProgress" :fn=refreshData ></progress-bar>
-        <table class="table">
+        <table v-if="panelType==='last'" class="table">
+            <thead>
+            <tr>
+                <th style="max-width: 50px">Pos</th>
+                <th>Veld</th>
+                <th>Rug#</th>
+                <th>Ploeg</th>
+                <th>Finishtijd</th>
+            </tr>
+            </thead>
+            <tr v-for="row in fields" :key="row.raceid">
+                <td>{{row.rank}} / {{row.participants}}</td>
+                <td>
+                    <template v-if="row.fieldnameshortsub !== '0'">
+                        {{row.fieldnameshortsub}}
+                    </template>
+                    <template v-if="row.fieldnameshortsub === '0'">
+                        {{row.fieldnameshort}}
+                    </template>
+                </td>
+                <td>{{row.backnumber}}</td>
+                <td class="team"> {{row.teamname}}</td>
+                <td>
+                    {{getTime(row)}}
+                    <small v-if="row.bonussecond > 0">
+                        +{{row.bonussecond}}
+                    </small>
+                </td>
+            </tr>
+        </table>
+        <table v-else class="table">
             <template v-for="block in fields">
                 <template v-for="field in block" :field=field :settings=settings>
                     <header-row :fieldname=field.fieldnameshort :settings=settings>
@@ -21,6 +51,8 @@
     import {ParseParams} from "../helpers/ParseParams";
     import ProgressBar from "./ProgressBar";
     import moment from "moment";
+    import {ResultStatus} from "../helpers/ResultStatus";
+    import {Crew} from "../helpers/Crew";
 
     export default {
         components: {
@@ -45,8 +77,12 @@
         },
         methods: {
             async refreshData() {
-                let blocks = await this.resultService.update();
-                this.updateFields(blocks);
+                if (this.panelType !== 'last') {
+                    let blocks = await this.resultService.update();
+                    this.updateFields(blocks);
+                } else {
+                    this.fields = await this.resultService.getLastResults();
+                }
             },
             updateFields(blocks) {
                 if (this.panelType === 'all') {
@@ -62,13 +98,19 @@
                         }
                         return block;
                     });
-                    this.fields =  this.resultService.getNextPage([lastBlock]);
+                    this.fields = this.resultService.getNextPage([lastBlock]);
                 } else if (this.panelType === 'day') {
                     const lastBlocks = blocks.filter((block) => {
                         return (moment(block[0].daydate).isSame(moment(), 'd'));
                     });
-                    this.fields =  this.resultService.getNextPage(lastBlocks);
+                    this.fields = this.resultService.getNextPage(lastBlocks);
                 }
+            },
+            getTime(crew) {
+                if (ResultStatus.isValid(+crew.status)) {
+                    return Crew.formatTime(crew.totaltime + crew.bonussecond);
+                }
+                return ResultStatus.getLabel(+crew.status);
             }
         },
         async mounted() {
