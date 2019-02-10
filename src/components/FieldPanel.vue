@@ -31,10 +31,10 @@
         },
         methods: {
             getCrewField(crew, column) {
-                return (new Crew(crew)).getCrewField(column);
+                return Crew.getCrewField(crew, column);
             },
             getCrewRank(crew) {
-                return (new Crew(crew)).getCrewRank();
+                return Crew.getCrewRank(crew);
             },
         }
     }

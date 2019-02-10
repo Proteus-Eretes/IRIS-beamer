@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <beamer-panel v-if="loaded" :settings=settings :regatta=regatta />
+        <beamer-panel v-if="loaded" :settings=settings :regatta=regatta></beamer-panel>
     </div>
 </template>
 
@@ -31,7 +31,7 @@
             document.body.appendChild(css);
             this.regatta = await this.beamerSettings.getRegattaInformation();
             this.loaded = true;
-        }
+        },
     };
 
 </script>

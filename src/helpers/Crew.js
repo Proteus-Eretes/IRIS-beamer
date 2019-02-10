@@ -4,34 +4,31 @@ import {ResultStatus} from "./ResultStatus";
 
 export class Crew {
 
-    constructor(crew) {
-        this.crew = crew;
-    }
-
     /**
+     * @param {object} crew
      * @param {string} column
      * @return {string}
      */
-    getCrewField(column) {
+    static getCrewField(crew, column) {
         const pathElements = column.path.split('-');
         if (pathElements[0] === 'time') {
-            const round = Math.min(pathElements[1], this.crew.times.length - 1);
-            if (ResultStatus.isValid(+this.crew.times[round].status)) {
-                const index = this.crew.times[round].times.length - 1;
-                const time = this.crew.times[round].times[index];
+            const round = Math.min(pathElements[1], crew.times.length - 1);
+            if (ResultStatus.isValid(+crew.times[round].status)) {
+                const index = crew.times[round].times.length - 1;
+                const time = crew.times[round].times[index];
                 if (round === +pathElements[1] && pathElements[2] === 'finish') {
-                    return this._formatTime(time.time + this.crew.times[round].bonussecond);
+                    return Crew._formatTime(time.time + crew.times[round].bonussecond);
                 } else if (pathElements[2] === 'results') {
-                    return this._formatTime(time.time);
+                    return Crew._formatTime(time.time);
                 }
                 else {
                     return '00:00.0';
                 }
             } else {
-                return ResultStatus.getLabel(this.crew.times[round].status);
+                return ResultStatus.getLabel(crew.times[round].status);
             }
         }
-        let element = this.crew;
+        let element = crew;
         for (let i = 0; i < pathElements.length; i++) {
             if (element[pathElements[i]]) {
                 element = element[pathElements[i]];
@@ -44,17 +41,19 @@ export class Crew {
 
     /**
      * Get the current rank of the crew
+     * @param {object} crew
      * @return {int}
      */
-    getCrewRank() {
-        return this.crew.times[this.crew.times.length - 1].rank;
+    static getCrewRank(crew) {
+        return crew.times[crew.times.length - 1].rank;
     };
 
     /**
      * formatTime a of format [h:]mm:ss.n
+     * @param {object} crew
      * @param {string} time
      */
-    _formatTime(time) {
+    static _formatTime(crew, time) {
         const momentTime = moment.unix(time).utc();
         if (momentTime.hours()) {
             return momentTime.format('HH:mm:ss.S');

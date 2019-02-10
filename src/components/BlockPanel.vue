@@ -1,15 +1,17 @@
 <template>
-    <table class="table">
-        <template v-for="block in fields">
-            <template v-for="field in block" :field=field :settings=settings>
-                <header-row :fieldname=field.fieldnameshort :settings=settings>
-                </header-row>
-                <field-panel :key="field.id" :field=field :settings=settings>
-                </field-panel>
+    <div>
+        <progress-bar ref="topProgress" :fn=refreshData ></progress-bar>
+        <table class="table">
+            <template v-for="block in fields">
+                <template v-for="field in block" :field=field :settings=settings>
+                    <header-row :fieldname=field.fieldnameshort :settings=settings>
+                    </header-row>
+                    <field-panel :key="field.id" :field=field :settings=settings>
+                    </field-panel>
+                </template>
             </template>
-
-        </template>
-    </table>
+        </table>
+    </div>
 </template>
 
 <script>
@@ -17,9 +19,11 @@
     import HeaderRow from "./HeaderRow";
     import {ResultService} from "../services/ResultService";
     import {ParseParams} from "../helpers/ParseParams";
+    import ProgressBar from "./ProgressBar";
 
     export default {
         components: {
+            ProgressBar,
             HeaderRow,
             FieldPanel
         },
@@ -40,11 +44,9 @@
             }
         },
         methods: {
-            refreshData() {
-                setInterval(async () => {
-                    let blocks = await this.resultService.update();
-                    this.updateFields(blocks);
-                }, 10000)
+            async refreshData() {
+                let blocks = await this.resultService.update();
+                this.updateFields(blocks);
             },
             updateFields(blocks) {
                 this.beginCount = this.endCount;
@@ -68,7 +70,7 @@
                             if (count + field.crewCount > this.endCount) {
                                 field.crews.teams.length = Math.min(0, count + field.crewCount - this.endCount);
                             } else {
-                                if(count + field.crewCount > this.beginCount) {
+                                if (count + field.crewCount > this.beginCount) {
                                     //Nothing
                                 } else {
                                     field.crews.teams.length = 0;
@@ -92,7 +94,7 @@
         async mounted() {
             let blocks = await this.resultService.update();
             this.updateFields(blocks);
-            this.refreshData();
+            this.$refs.topProgress.start();
         },
     }
 </script>
