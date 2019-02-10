@@ -1,7 +1,9 @@
 <template>
     <div>
         <h1> {{ settings.preset_name }}</h1>
-        <block-panel :settings=settings :regatta="regatta"> </block-panel>
+        <div class="row">
+            <block-panel v-for="panel in panels" :class=panelWidth :settings=settings :regatta="regatta" :panel-type=panel :key=panel> </block-panel>
+        </div>
     </div>
 </template>
 
@@ -16,7 +18,13 @@
                 export_columns: [],
             },
             regatta: {},
+            panels: Array,
         },
+        computed: {
+            panelWidth() {
+                return 'col-' + (12 / this.panels.length);
+            }
+        }
     }
 </script>
 

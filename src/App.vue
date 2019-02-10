@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <beamer-panel v-if="loaded" :settings=settings :regatta=regatta></beamer-panel>
+        <beamer-panel v-if="loaded" :settings=settings :regatta=regatta :panels=panels></beamer-panel>
     </div>
 </template>
 
@@ -21,6 +21,7 @@
                 regatta: {},
                 loaded: false,
                 beamerSettings: new BeamerSettings(url.getKey(), url.getUrl(), url.getPreset()),
+                panels: url.getPanels(),
             };
         },
         async mounted() {

@@ -20,6 +20,7 @@
     import {ResultService} from "../services/ResultService";
     import {ParseParams} from "../helpers/ParseParams";
     import ProgressBar from "./ProgressBar";
+    import moment from "moment";
 
     export default {
         components: {
@@ -33,13 +34,12 @@
                 export_columns: [],
             },
             regatta: {},
+            panelType: String
         },
         data() {
             const url = new ParseParams(window.location.href);
             return {
                 fields: {},
-                beginCount: 0,
-                endCount: 0,
                 resultService: new ResultService(url.getKey(), url.getUrl(), this.regatta.id, this.settings.id),
             }
         },
@@ -49,60 +49,25 @@
                 this.updateFields(blocks);
             },
             updateFields(blocks) {
-                this.beginCount = this.endCount;
-                this.endCount += 20;
-                this.fields = [];
-                let count = 0;
-                let fieldCount = 0;
-                blocks = blocks.map(block => {
-                    block = block.map((field) => {
-                        field.crewCount = field.crews.teams.length;
-                        return field;
-                    });
-                    block.crewCount = block.reduce((sum, field) => {
-                        return sum + field.crewCount;
-                    }, 0);
-                    return block;
-                });
-                blocks.forEach((block) => {
-                    if (count + block.crewCount > this.beginCount && count < this.endCount) {
-                        this.fields.push(block);
-                        this.fields[this.fields.length - 1].forEach(field => {
-                            console.log(`Count: ${count} begin: ${this.beginCount} end: ${this.endCount}: crew ${field.crewCount}`);
-                            if (2 * fieldCount + count > this.endCount) {
-                                field.crews.teams.length = 0;
+                if (this.panelType === 'all') {
+                    this.fields = this.resultService.getNextPage(blocks);
+                } else if (this.panelType === 'block') {
+                    const lastBlock = blocks.reduce((block, testBlock) => {
+                        if (moment().diff(testBlock[0].daydate + ' ' + testBlock[0].starttime) < 0) {
+                            if (moment().diff(block.daydate + ' ' + block.endtime) > 0) {
+                                return block;
+                            } else {
+                                return testBlock;
                             }
-                            if (count < this.beginCount) {
-                                if (count + field.crewCount > this.beginCount) {
-                                    field.crews.teams.splice(0, this.beginCount - count);
-                                } else {
-                                    field.crews.teams.length = 0;
-                                }
-
-                            }
-                            if (count + field.crews.teams.length + 2 * fieldCount> this.endCount) {
-                                field.crews.teams.length = Math.max(0, this.endCount - count - 1 - 2 * fieldCount);
-                            }
-
-                            count += field.crewCount;
-                            if (field.crews.teams.length) {
-                                fieldCount++;
-                            }
-                        });
-                        this.endCount -= 2 * fieldCount;
-                        if (fieldCount > 1) {
-                            this.endCount++;
                         }
-                        this.fields[this.fields.length - 1] = this.fields[this.fields.length - 1].filter(field => {
-                            return field.crews.teams.length > 0;
-                        })
-                    } else {
-                        count += block.crewCount;
-                    }
-                });
-
-                if (count < this.endCount) {
-                    this.endCount = 0;
+                        return block;
+                    });
+                    this.fields =  this.resultService.getNextPage([lastBlock]);
+                } else if (this.panelType === 'day') {
+                    const lastBlocks = blocks.filter((block) => {
+                        return (moment(block[0].daydate).isSame(moment(), 'd'));
+                    });
+                    this.fields =  this.resultService.getNextPage(lastBlocks);
                 }
             }
         },
