@@ -71,13 +71,9 @@
                 return typeof this.status === 'number'
             },
 
-            boxShadow() {
-                return this.colorShadow || this.progressColor
-            },
-
             barStyle() {
                 return {
-                    position: 'fixed',
+                    position: 'relative',
                     top: '0',
                     left: '0',
                     right: '0',
@@ -98,8 +94,6 @@
                     width: '100px',
                     height: '100%',
                     opacity: this.progress ? '1' : '0',
-                    boxShadow: `0 0 10px ${this.boxShadow}, 0 0 5px ${this.boxShadow}`,
-                    transform: 'rotate(3deg) translate(0px, -4px)'
                 }
             }
         },
