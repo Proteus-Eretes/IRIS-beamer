@@ -17,9 +17,9 @@ export class Crew {
                 const index = crew.times[round].times.length - 1;
                 const time = crew.times[round].times[index];
                 if (round === +pathElements[1] && pathElements[2] === 'finish') {
-                    return Crew._formatTime(time.time + crew.times[round].bonussecond);
+                    return Crew._formatTime(crew, time.time + crew.times[round].bonussecond);
                 } else if (pathElements[2] === 'results') {
-                    return Crew._formatTime(time.time);
+                    return Crew._formatTime(crew, time.time);
                 }
                 else {
                     return '00:00.0';

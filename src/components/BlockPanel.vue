@@ -64,25 +64,34 @@
                     return block;
                 });
                 blocks.forEach((block) => {
-                    if (block.crewCount > this.beginCount) {
+                    if (count + block.crewCount > this.beginCount && count < this.endCount) {
                         this.fields.push(block);
                         this.fields[this.fields.length - 1].forEach(field => {
-                            if (count + field.crewCount > this.endCount) {
-                                field.crews.teams.length = Math.min(0, count + field.crewCount - this.endCount);
-                            } else {
+
+                            console.log(`Count: ${count} begin: ${this.beginCount} end: ${this.endCount}: crew ${field.crewCount}`);
+                            if (count > this.endCount) {
+                                field.crews.teams.length = 0;
+                            }
+                            if (count < this.beginCount) {
                                 if (count + field.crewCount > this.beginCount) {
-                                    //Nothing
+                                    field.crews.teams.splice(0, this.beginCount - count - 1);
                                 } else {
                                     field.crews.teams.length = 0;
                                 }
+
+                            }
+                            if (count + field.crews.teams.length > this.endCount) {
+                                field.crews.teams.length = Math.max(0, this.endCount - count - 1);
                             }
 
-
                             count += field.crewCount;
+
                         });
                         this.fields[this.fields.length - 1] = this.fields[this.fields.length - 1].filter(field => {
                             return field.crews.teams.length > 0;
                         })
+                    } else {
+                        count += block.crewCount;
                     }
                 });
 
