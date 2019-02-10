@@ -1,6 +1,11 @@
 <template>
     <div id="app">
         <beamer-panel v-if="loaded" :settings=settings :regatta=regatta :panels=panels></beamer-panel>
+        <footer>
+            <div class="container-fluid fixed-bottom text-center text-white bg-dark">
+                IRIS - hoesnelwasik.nl
+            </div>
+        </footer>
     </div>
 </template>
 
@@ -45,5 +50,7 @@
         text-align: center;
         color: #2c3e50;
     }
-
+    body {
+        overflow: hidden;
+    }
 </style>

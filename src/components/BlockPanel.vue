@@ -3,6 +3,9 @@
         <progress-bar ref="topProgress" :fn=refreshData ></progress-bar>
         <table v-if="panelType==='last'" class="table">
             <thead>
+            <tr class="header-row">
+                <th colspan="5">Last gefinished ploegen</th>
+            </tr>
             <tr>
                 <th style="max-width: 50px">Pos</th>
                 <th>Veld</th>
@@ -26,15 +29,20 @@
                 <td>
                     {{getTime(row)}}
                     <small v-if="row.bonussecond > 0">
-                        +{{row.bonussecond}}
+                        (+{{row.bonussecond}})
                     </small>
                 </td>
             </tr>
         </table>
         <table v-else class="table">
+            <thead>
+            <tr class="header-row">
+                <th :colspan=colspan >{{displayTitle}}</th>
+            </tr>
+            </thead>
             <template v-for="block in fields">
                 <template v-for="field in block" :field=field :settings=settings>
-                    <header-row :fieldname=field.fieldnameshort :settings=settings>
+                    <header-row :fieldname=field.fieldnameshort :settings=settings :title=panelType>
                     </header-row>
                     <field-panel :key="field.id" :field=field :settings=settings>
                     </field-panel>
@@ -86,7 +94,7 @@
             },
             updateFields(blocks) {
                 if (this.panelType === 'all') {
-                    this.fields = this.resultService.getNextPage(blocks);
+                    this.fields = this.resultService.getNextPage(blocks, this._rows());
                 } else if (this.panelType === 'block') {
                     const lastBlock = blocks.reduce((block, testBlock) => {
                         if (moment().diff(testBlock[0].daydate + ' ' + testBlock[0].starttime) < 0) {
@@ -98,12 +106,12 @@
                         }
                         return block;
                     });
-                    this.fields = this.resultService.getNextPage([lastBlock]);
+                    this.fields = this.resultService.getNextPage([lastBlock], this._rows());
                 } else if (this.panelType === 'day') {
                     const lastBlocks = blocks.filter((block) => {
                         return (moment(block[0].daydate).isSame(moment(), 'd'));
                     });
-                    this.fields = this.resultService.getNextPage(lastBlocks);
+                    this.fields = this.resultService.getNextPage(lastBlocks, this._rows());
                 }
             },
             getTime(crew) {
@@ -111,6 +119,10 @@
                     return Crew.formatTime(crew.totaltime + crew.bonussecond);
                 }
                 return ResultStatus.getLabel(+crew.status);
+            },
+            _rows() {
+                const height = (window.innerHeight - document.getElementsByClassName('beamer-title')[0].offsetHeight - document.getElementsByTagName('footer')[0].offsetHeight);
+                return Math.floor(height / 51) - 1;
             }
         },
         async mounted() {
@@ -118,5 +130,20 @@
             this.updateFields(blocks);
             this.$refs.topProgress.start();
         },
+        computed: {
+            colspan() {
+                return 1 + this.settings.export_columns.length;
+            },
+            displayTitle() {
+                switch (this.panelType) {
+                    case 'all':
+                        return 'Volledige wedstrijd';
+                    case 'block':
+                        return 'Huidig block';
+                    case 'day':
+                        return 'Huidig dag';
+                }
+            },
+        }
     }
 </script>

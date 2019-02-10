@@ -145,10 +145,19 @@
                 this.status = (o === 100 ? null : o);
                 this.progress = Math.min(amount, 99);
                 if (this.progress >= 99) {
-                    this.fn();
+                    this._execute();
                     this.set(1);
                 }
             },
+
+            async _execute() {
+                try {
+                    await this.fn();
+                    this.error = false;
+                } catch (e) {
+                    this.error = true;
+                }
+            }
         }
     }
 </script>

@@ -1,7 +1,7 @@
 <template>
     <thead>
     <tr>
-        <th class="rank fieldname">
+        <th class="fieldname">
             {{fieldname}}
         </th>
         <th :class="[column.path]" v-for="column in settings.export_columns" :key="column.id">
@@ -19,7 +19,7 @@
                 export_columns: [],
             },
             fieldname: '',
-        }
+        },
     }
 </script>
 

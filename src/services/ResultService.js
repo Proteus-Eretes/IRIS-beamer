@@ -37,9 +37,9 @@ export class ResultService extends Service {
         return this._fetch(`/beamer/getLastResults/${this.regattaId}/${this.presetId}`);
     }
 
-    getNextPage(blocks) {
+    getNextPage(blocks, rows) {
         this.beginCount = this.endCount;
-        this.endCount += 20;
+        this.endCount += rows;
         this.fields = [];
         let count = 0;
         let fieldCount = 0;
@@ -60,8 +60,8 @@ export class ResultService extends Service {
             if (count + block.crewCount > this.beginCount && count < this.endCount) {
                 this.fields.push(block);
                 this.fields[this.fields.length - 1].forEach(field => {
-                    console.log(`Count: ${count} begin: ${this.beginCount} end: ${this.endCount}: crew ${field.crewCount}`);
-                    if (2 * fieldCount + count > this.endCount) {
+                    // console.log(`Count: ${count} begin: ${this.beginCount} end: ${this.endCount}: crew ${field.crewCount}`);
+                    if (fieldCount + count > this.endCount) {
                         field.crews.teams.length = 0;
                     }
                     if (count < this.beginCount) {
@@ -70,10 +70,9 @@ export class ResultService extends Service {
                         } else {
                             field.crews.teams.length = 0;
                         }
-
                     }
-                    if (count + field.crews.teams.length + 2 * fieldCount> this.endCount) {
-                        field.crews.teams.length = Math.max(0, this.endCount - count - 1 - 2 * fieldCount);
+                    if (count + field.crews.teams.length + fieldCount > this.endCount) {
+                        field.crews.teams.length = Math.max(0, this.endCount - count - 1 - fieldCount);
                     }
 
                     count += field.crewCount;
@@ -81,10 +80,7 @@ export class ResultService extends Service {
                         fieldCount++;
                     }
                 });
-                this.endCount -= 2 * fieldCount;
-                if (fieldCount > 1) {
-                    this.endCount++;
-                }
+                this.endCount -= fieldCount;
                 this.fields[this.fields.length - 1] = this.fields[this.fields.length - 1].filter(field => {
                     return field.crews.teams.length > 0;
                 });
