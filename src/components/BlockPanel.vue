@@ -53,6 +53,7 @@
                 this.endCount += 20;
                 this.fields = [];
                 let count = 0;
+                let fieldCount = 0;
                 blocks = blocks.map(block => {
                     block = block.map((field) => {
                         field.crewCount = field.crews.teams.length;
@@ -67,26 +68,31 @@
                     if (count + block.crewCount > this.beginCount && count < this.endCount) {
                         this.fields.push(block);
                         this.fields[this.fields.length - 1].forEach(field => {
-
                             console.log(`Count: ${count} begin: ${this.beginCount} end: ${this.endCount}: crew ${field.crewCount}`);
-                            if (count > this.endCount) {
+                            if (2 * fieldCount + count > this.endCount) {
                                 field.crews.teams.length = 0;
                             }
                             if (count < this.beginCount) {
                                 if (count + field.crewCount > this.beginCount) {
-                                    field.crews.teams.splice(0, this.beginCount - count - 1);
+                                    field.crews.teams.splice(0, this.beginCount - count);
                                 } else {
                                     field.crews.teams.length = 0;
                                 }
 
                             }
-                            if (count + field.crews.teams.length > this.endCount) {
-                                field.crews.teams.length = Math.max(0, this.endCount - count - 1);
+                            if (count + field.crews.teams.length + 2 * fieldCount> this.endCount) {
+                                field.crews.teams.length = Math.max(0, this.endCount - count - 1 - 2 * fieldCount);
                             }
 
                             count += field.crewCount;
-
+                            if (field.crews.teams.length) {
+                                fieldCount++;
+                            }
                         });
+                        this.endCount -= 2 * fieldCount;
+                        if (fieldCount > 1) {
+                            this.endCount++;
+                        }
                         this.fields[this.fields.length - 1] = this.fields[this.fields.length - 1].filter(field => {
                             return field.crews.teams.length > 0;
                         })
