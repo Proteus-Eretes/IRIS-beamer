@@ -14,16 +14,37 @@ export class ResultService extends Service {
         this.fields = [];
         this.beginCount = 0;
         this.endCount = 0;
+        this.regatta = null;
+        this.lastReults = null;
     }
 
-    async getLastResults() {
+    /**
+     * @throws Error
+     * @return {Promise<null|*>}
+     */
+    async getUpdatedLastResults() {
         const data = await this._updateLastResults();
-        return data.regatta;
+        this.lastReults = data.regatta;
+        return this.lastReults;
     }
 
+    getLastResults() {
+        return this.lastReults;
+    }
+
+
+    /**
+     * @throws Error
+     * @return {Promise<null|*|{}|props.regatta|regatta>}
+     */
     async update() {
         const data = await this._update();
+        this.regatta = JSON.stringify(data.regatta);
         return data.regatta;
+    }
+
+    getLastReggataData() {
+        return JSON.parse(this.regatta);
     }
 
     /**

@@ -152,8 +152,7 @@
 
             async _execute() {
                 try {
-                    await this.fn();
-                    this.error = false;
+                    this.error = !(await this.fn());
                 } catch (e) {
                     this.error = true;
                 }

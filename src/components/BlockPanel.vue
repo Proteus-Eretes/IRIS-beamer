@@ -86,11 +86,23 @@
         methods: {
             async refreshData() {
                 if (this.panelType !== 'last') {
-                    let blocks = await this.resultService.update();
-                    this.updateFields(blocks);
+                    try {
+                        const blocks = await this.resultService.update();
+                        this.updateFields(blocks);
+                    } catch (e) {
+                        this.updateFields(this.resultService.getLastReggataData());
+                        return false;
+                    }
+
                 } else {
-                    this.fields = await this.resultService.getLastResults();
+                    try {
+                        this.fields = await this.resultService.getUpdatedLastResults();
+                    } catch(e) {
+                        this.fields = this.resultService.getLastResults();
+                        return false;
+                    }
                 }
+                return true;
             },
             updateFields(blocks) {
                 if (this.panelType === 'all') {
