@@ -4,7 +4,7 @@
         <table v-if="panelType==='last'" class="table">
             <thead>
             <tr class="header-row">
-                <th colspan="5">Last gefinished ploegen</th>
+                <th colspan="5">Laatst gefinishte ploegen</th>
             </tr>
             <tr>
                 <th style="max-width: 50px">Pos</th>
