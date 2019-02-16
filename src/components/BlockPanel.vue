@@ -93,7 +93,6 @@
                         this.updateFields(this.resultService.getLastReggataData());
                         return false;
                     }
-
                 } else {
                     try {
                         this.fields = await this.resultService.getUpdatedLastResults();
@@ -109,12 +108,17 @@
                     this.fields = this.resultService.getNextPage(blocks, this._rows());
                 } else if (this.panelType === 'block') {
                     const lastBlock = blocks.reduce((block, testBlock) => {
-                        if (moment().diff(testBlock[0].daydate + ' ' + testBlock[0].starttime) < 0) {
-                            if (moment().diff(block.daydate + ' ' + block.endtime) > 0) {
-                                return block;
-                            } else {
+                        const startMoment = moment(testBlock[0].daydate + ' ' + testBlock[0].starttime).unix();
+                        const currentMoment = moment().unix();
+                        const startMomentBlock = moment(block[0].daydate + ' ' + block[0].starttime).unix();
+                        if (currentMoment - startMoment > 0) { //testBlock has begun
+                            if (currentMoment - startMomentBlock > 0) { //Block has begun
+                                if (startMomentBlock - startMoment > 0) {
+                                    return block;
+                                }
                                 return testBlock;
                             }
+                            return testBlock;
                         }
                         return block;
                     });

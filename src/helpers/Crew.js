@@ -30,11 +30,14 @@ export class Crew {
         }
         let element = crew;
         for (let i = 0; i < pathElements.length; i++) {
-            if (element[pathElements[i]]) {
+            if (element[pathElements[i]] !== undefined) {
                 element = element[pathElements[i]];
             } else {
                 return '';
             }
+        }
+        if (pathElements[0] === 'times' && pathElements[2].includes('splash')) {
+            return Crew.formatTime(element);
         }
         return element;
     };

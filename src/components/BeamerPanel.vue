@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid">
-        <h1 class="beamer-title"> {{ settings.preset_name }}</h1>
+        <h1 class="beamer-title"> {{ settings.title }}</h1>
         <div class="row">
             <block-panel v-for="panel in panels" :class=panelWidth :settings=settings :regatta="regatta" :panel-type=panel :key=panel> </block-panel>
         </div>
