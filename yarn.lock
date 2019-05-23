@@ -9608,10 +9608,10 @@ shellwords@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
 
-shipit-cli@^4.1.2:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/shipit-cli/-/shipit-cli-4.1.2.tgz#54c3e33be4a71c598c652ea35c1c9ce08b8ffeeb"
-  integrity sha512-wz9EflcMPFtqbbgSDlYlFgMKWjRHkLF0A6FrlGVT5SqpRqtpTBPSxzmVTarQkX/teUTCVRupQtIDphkS9vMzfg==
+shipit-cli@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/shipit-cli/-/shipit-cli-4.2.0.tgz#3689fd6f82000e0d850fa0e78ecb1a5979863c71"
+  integrity sha512-fOAzd+OeJ2jONDdmUCWlJH2Yy/31ZzBuLE5X78I/XXjSZZ3U2hFh4pA5MJ6bf+z4X1eK7k6jJVtVCyIeP9EudA==
   dependencies:
     chalk "^2.4.1"
     commander "^2.15.0"
