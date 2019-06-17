@@ -14,7 +14,7 @@
     "moment": "^2.24.0",
     "shipit-cli": "^4.2.0",
     "shipit-deploy": "^4.1.4",
-    "vue": "^2.5.22",
+    "vue": "^2.6.10",
     "vue-router": "^3.0.6"
   },
   "devDependencies": {
@@ -31,6 +31,6 @@
     "eslint-plugin-vue": "^5.2.2",
     "node-sass": "^4.12.0",
     "sass-loader": "^7.1.0",
-    "vue-template-compiler": "^2.5.21"
+    "vue-template-compiler": "^2.6.10"
   }
 }
