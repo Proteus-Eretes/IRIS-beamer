@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@vue/cli": "^3.8.2",
-    "bootstrap-vue": "^2.0.0-rc.11",
+    "bootstrap-vue": "^2.0.0-rc.25",
     "moment": "^2.24.0",
     "shipit-cli": "^4.2.0",
     "shipit-deploy": "^4.1.4",
