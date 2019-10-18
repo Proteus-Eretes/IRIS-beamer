@@ -66,9 +66,6 @@ export class ResultService extends Service {
         let fieldCount = 0;
         blocks = blocks.map(block => {
             block = block.map((field) => {
-                field.crews.teams = field.crews.teams.filter(team => {
-                    return team.times.length > 0;
-                });
                 field.crewCount = field.crews.teams.length;
                 return field;
             });
@@ -81,7 +78,6 @@ export class ResultService extends Service {
             if (count + block.crewCount > this.beginCount && count < this.endCount) {
                 this.fields.push(block);
                 this.fields[this.fields.length - 1].forEach(field => {
-                    // console.log(`Count: ${count} begin: ${this.beginCount} end: ${this.endCount}: crew ${field.crewCount}`);
                     if (fieldCount + count > this.endCount) {
                         field.crews.teams.length = 0;
                     }

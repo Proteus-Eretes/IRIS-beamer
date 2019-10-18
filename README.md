@@ -1,4 +1,4 @@
-# beamer
+# IRIS Beamer
 
 ## Project setup
 ```

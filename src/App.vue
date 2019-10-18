@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <b-img v-if="hasImage" fluid :src="imgUrl"></b-img>
         <beamer-panel v-if="loaded" :settings=settings :regatta=regatta :panels=panels></beamer-panel>
         <footer>
             <div class="container-fluid fixed-bottom text-center text-white bg-dark">
@@ -38,6 +39,18 @@
             this.regatta = await this.beamerSettings.getRegattaInformation();
             this.loaded = true;
         },
+        computed: {
+            hasImage() {
+                if (this.settings) {
+                    return this.settings['background'] !== '';
+                }
+                return false;
+            },
+            imgUrl() {
+                const url = new ParseParams(window.location.href);
+                return `${url.getUrl()}/files/image/${this.settings['background']}`
+            },
+        }
     };
 
 </script>
