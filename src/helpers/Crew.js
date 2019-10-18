@@ -20,8 +20,7 @@ export class Crew {
                     return Crew.formatTime(time.time + crew.times[round].bonussecond);
                 } else if (pathElements[2] === 'results') {
                     return Crew.formatTime(time.time);
-                }
-                else {
+                } else {
                     return '00:00.0';
                 }
             } else {
@@ -36,7 +35,7 @@ export class Crew {
                 return '';
             }
         }
-        if (pathElements[0] === 'times' && pathElements[2].includes('splash')) {
+        if (pathElements[0] === 'times') {
             return Crew.formatTime(element);
         }
         return element;
