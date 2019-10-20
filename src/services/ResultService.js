@@ -16,6 +16,9 @@ export class ResultService extends Service {
         this.endCount = 0;
         this.regatta = null;
         this.lastReults = null;
+        this._fieldIndex = null;
+        this._blockIndex = null;
+        this.blocks = null;
     }
 
     /**
@@ -38,20 +41,40 @@ export class ResultService extends Service {
      * @return {Promise<null|*|{}|props.regatta|regatta>}
      */
     async update() {
+        if (this.regatta === null) {
+            const regatta = await this._initRegatta();
+            this.regatta = JSON.stringify(regatta.regatta);
+            this.blocks = JSON.parse(JSON.stringify(regatta.regatta));
+            this._blockIndex = 0;
+            this._fieldIndex = 0;
+        }
         const data = await this._update();
-        this.regatta = JSON.stringify(data.regatta);
-        return data.regatta;
+        const regattaData = JSON.parse(this.regatta);
+        regattaData[this._blockIndex][this._fieldIndex].crews = data.field;
+        this.regatta = JSON.stringify(regattaData);
+        if (++this._fieldIndex === this.blocks[this._blockIndex].length) {
+            this._fieldIndex = 0;
+            if (++this._blockIndex === this.blocks.length) {
+                this._blockIndex = 0;
+            }
+        }
+        return regattaData;
     }
 
-    getLastReggataData() {
+    getLastRegattaData() {
         return JSON.parse(this.regatta);
+    }
+
+    _initRegatta() {
+        return this._fetch(`/beamer/getRegattaData/${this.regattaId}/${this.presetId}`);
     }
 
     /**
      * @private
      */
     _update() {
-        return this._fetch(`/beamer/getRegattaData/${this.regattaId}/${this.presetId}`);
+        const fieldCode = this.blocks[this._blockIndex][this._fieldIndex].fieldnameshort;
+        return this._fetch(`/beamer/getField/${this.regattaId}/${this.presetId}/${fieldCode.replace(/\+/g, '%2B')}`);
     }
 
     _updateLastResults() {
@@ -66,7 +89,11 @@ export class ResultService extends Service {
         let fieldCount = 0;
         blocks = blocks.map(block => {
             block = block.map((field) => {
-                field.crewCount = field.crews.teams.length;
+                if (field.crews) {
+                    field.crewCount = field.crews.teams.length;
+                } else {
+                    field.crewCount = 0;
+                }
                 return field;
             });
             block.crewCount = block.reduce((sum, field) => {
@@ -88,18 +115,18 @@ export class ResultService extends Service {
                             field.crews.teams.length = 0;
                         }
                     }
-                    if (count + field.crews.teams.length + fieldCount > this.endCount) {
+                    if (count + field.crewCount + fieldCount > this.endCount) {
                         field.crews.teams.length = Math.max(0, this.endCount - count - 1 - fieldCount);
                     }
 
                     count += field.crewCount;
-                    if (field.crews.teams.length) {
+                    if (field.crewCount) {
                         fieldCount++;
                     }
                 });
                 this.endCount -= fieldCount;
                 this.fields[this.fields.length - 1] = this.fields[this.fields.length - 1].filter(field => {
-                    return field.crews.teams.length > 0;
+                    return field.crewCount;
                 });
             } else {
                 count += block.crewCount;
