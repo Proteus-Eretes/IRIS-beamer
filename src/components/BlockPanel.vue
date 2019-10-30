@@ -90,7 +90,7 @@
                         const blocks = await this.resultService.update();
                         this.updateFields(blocks);
                     } catch (e) {
-                        this.updateFields(this.resultService.getLastReggataData());
+                        this.updateFields(this.resultService.getLastRegattaData());
                         return false;
                     }
                 } else {
