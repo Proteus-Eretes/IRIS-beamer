@@ -105,7 +105,7 @@ export class ResultService extends Service {
             if (count + block.crewCount > this.beginCount && count < this.endCount) {
                 this.fields.push(block);
                 this.fields[this.fields.length - 1].forEach(field => {
-                    if (fieldCount + count > this.endCount) {
+                    if (fieldCount + count > this.endCount && field.crewCount) {
                         field.crews.teams.length = 0;
                     }
                     if (count < this.beginCount) {
@@ -113,9 +113,10 @@ export class ResultService extends Service {
                             field.crews.teams.splice(0, this.beginCount - count);
                         } else {
                             field.crews.teams.length = 0;
+                            field.crewCount = 0;
                         }
                     }
-                    if (count + field.crewCount + fieldCount > this.endCount) {
+                    if ((count + field.crewCount + fieldCount > this.endCount) && field.crewCount) {
                         field.crews.teams.length = Math.max(0, this.endCount - count - 1 - fieldCount);
                     }
 
