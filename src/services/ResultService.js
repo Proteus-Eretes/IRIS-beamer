@@ -105,13 +105,13 @@ export class ResultService extends Service {
             if (count + block.crewCount > this.beginCount && count < this.endCount) {
                 this.fields.push(block);
                 this.fields[this.fields.length - 1].forEach(field => {
-                    if (fieldCount + count > this.endCount && field.crewCount) {
+                    if ((fieldCount + count > this.endCount) && field.crewCount) {
                         field.crews.teams.length = 0;
                     }
                     if (count < this.beginCount) {
-                        if (count + field.crewCount > this.beginCount) {
+                        if ((count + field.crewCount > this.beginCount) && field.crewCount) {
                             field.crews.teams.splice(0, this.beginCount - count);
-                        } else {
+                        } else if (field.crewCount) {
                             field.crews.teams.length = 0;
                             field.crewCount = 0;
                         }

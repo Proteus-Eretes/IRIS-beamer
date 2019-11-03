@@ -90,6 +90,7 @@
                         const blocks = await this.resultService.update();
                         this.updateFields(blocks);
                     } catch (e) {
+                        console.log(e);
                         this.updateFields(this.resultService.getLastRegattaData());
                         return false;
                     }

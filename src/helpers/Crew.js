@@ -35,7 +35,7 @@ export class Crew {
                 return '';
             }
         }
-        if (pathElements[0] === 'times') {
+        if (pathElements[0] === 'time') {
             return Crew.formatTime(element);
         }
         return element;
