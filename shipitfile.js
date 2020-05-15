@@ -16,7 +16,8 @@ module.exports = shipit => {
             repositoryUrl: 'https://github.com/Proteus-Eretes/IRIS-beamer.git',
         },
         live: {
-            servers: 'dev@poweredbyiris.nl',
+//             servers: 'dev@poweredbyiris.nl',
+            servers: 'dev@64.225.77.148'
         },
     })
 }
