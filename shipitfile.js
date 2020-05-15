@@ -7,7 +7,7 @@ module.exports = shipit => {
             'dist/',
             '/srv/beamer.poweredbyiris.nl/releases/' + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes() + date.getSeconds()
         );
-        await shipit.remote('ln -snf releases/' + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes() + date.getSeconds() + ' /srv/beamer3.poweredbyiris.nl/current');
+        await shipit.remote('ln -snf releases/' + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes() + date.getSeconds() + ' /srv/beamer.poweredbyiris.nl/current');
     });
 
     shipit.initConfig({
