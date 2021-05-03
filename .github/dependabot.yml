@@ -1,0 +1,49 @@
+version: 2
+registries:
+  git-github-com:
+    type: git
+    url: https://github.com
+    username: x-access-token
+    password: "${{secrets.GIT_GITHUB_COM_PASSWORD}}"
+
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "04:00"
+  open-pull-requests-limit: 3
+  reviewers:
+  - RensHam
+  ignore:
+  - dependency-name: apollo-server-express
+    versions:
+    - 2.19.1
+    - 2.19.2
+    - 2.21.0
+    - 2.21.1
+    - 2.22.1
+  - dependency-name: sass-loader
+    versions:
+    - 10.1.1
+    - 11.0.0
+  - dependency-name: "@vue/cli-plugin-babel"
+    versions:
+    - 4.5.11
+  - dependency-name: "@vue/cli-plugin-eslint"
+    versions:
+    - 4.5.11
+  - dependency-name: apollo-server-core
+    versions:
+    - 2.19.2
+  - dependency-name: lodash
+    versions:
+    - 4.17.20
+  - dependency-name: elliptic
+    versions:
+    - 6.5.3
+  - dependency-name: handlebars
+    versions:
+    - 4.7.6
+  registries:
+  - git-github-com
