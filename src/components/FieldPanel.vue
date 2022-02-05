@@ -12,11 +12,9 @@
 </template>
 
 <script>
-    import {Crew} from "../helpers/Crew";
-    import HeaderRow from "./HeaderRow";
+    import {Crew} from "../helpers/Crew.js";
 
     export default {
-        components: {HeaderRow},
         name: 'field-panel',
         props: {
             settings: {
@@ -27,7 +25,6 @@
                     teams: []
                 }
             },
-            rowsAllowed: 0,
         },
         methods: {
             getCrewField(crew, column) {

@@ -15,7 +15,7 @@ export class ResultService extends Service {
         this.beginCount = 0;
         this.endCount = 0;
         this.regatta = null;
-        this.lastReults = null;
+        this.lastResults = null;
         this._fieldIndex = null;
         this._blockIndex = null;
         this.blocks = null;
@@ -27,12 +27,12 @@ export class ResultService extends Service {
      */
     async getUpdatedLastResults() {
         const data = await this._updateLastResults();
-        this.lastReults = data.regatta;
-        return this.lastReults;
+        this.lastResults = data.regatta;
+        return this.lastResults;
     }
 
     getLastResults() {
-        return this.lastReults;
+        return this.lastResults;
     }
 
 
@@ -83,10 +83,12 @@ export class ResultService extends Service {
 
     getNextPage(blocks, rows) {
         this.beginCount = this.endCount;
+        console.log("begin count" , this.beginCount);
         this.endCount += rows;
         this.fields = [];
         let count = 0;
         let fieldCount = 0;
+        //Count amount of crews in a field
         blocks = blocks.map(block => {
             block = block.map((field) => {
                 if (field.crews) {
@@ -101,34 +103,40 @@ export class ResultService extends Service {
             }, 0);
             return block;
         });
+        console.log("===");
         blocks.forEach((block) => {
             if (count + block.crewCount > this.beginCount && count < this.endCount) {
                 this.fields.push(block);
                 this.fields[this.fields.length - 1].forEach(field => {
-                    if ((fieldCount + count > this.endCount) && field.crewCount) {
+                    if ((fieldCount + count > this.endCount) && field.crewCount) { // If the fieldheaders cause the limit to be exceeded
                         field.crews.teams.length = 0;
                     }
                     if (count < this.beginCount) {
-                        if ((count + field.crewCount > this.beginCount) && field.crewCount) {
+                        if ((count + field.crewCount > this.beginCount) && field.crewCount) { // Have to start halfway in this field
                             field.crews.teams.splice(0, this.beginCount - count);
-                        } else if (field.crewCount) {
+                        } else if (field.crewCount) { // Already shown this field so don't show it again
+                            count += field.crewCount;
                             field.crews.teams.length = 0;
                             field.crewCount = 0;
+                            console.log("Already shown", field.fieldnameshort);
                         }
                     }
-                    if ((count + field.crewCount + fieldCount > this.endCount) && field.crewCount) {
-                        field.crews.teams.length = Math.max(0, this.endCount - count - 1 - fieldCount);
+                    if ((count + field.crewCount + fieldCount > this.endCount) && field.crewCount) { // Part of this field will not fit
+                        // field.crews.teams.length = Math.max(0, this.endCount - count - 1 - fieldCount);
                     }
-
+                    console.log('Count:', count);
                     count += field.crewCount;
                     if (field.crewCount) {
                         fieldCount++;
                     }
                 });
                 this.endCount -= fieldCount;
+                console.log(this.fields[0]);
+                //returns 0 if field is already shown to avoid header shown twice
                 this.fields[this.fields.length - 1] = this.fields[this.fields.length - 1].filter(field => {
                     return field.crewCount;
                 });
+                console.log(this.fields[0]);
             } else {
                 count += block.crewCount;
             }
@@ -137,7 +145,6 @@ export class ResultService extends Service {
         if (count < this.endCount) {
             this.endCount = 0;
         }
-
         return this.fields;
     }
 }
