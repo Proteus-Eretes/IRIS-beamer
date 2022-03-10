@@ -52,10 +52,10 @@ export class Crew {
 
     /**
      * formatTime a of format [h:]mm:ss.n
-     * @param {string} time
+     * @param {float} time
      */
     static formatTime(time) {
-        const momentTime = moment.unix(time).utc();
+        const momentTime = moment.unix(Math.round(time * 10) / 10).utc();
         if (momentTime.hours()) {
             return momentTime.format('HH:mm:ss.S');
         }
