@@ -12,14 +12,13 @@
 </template>
 
 <script>
-    export default {
-        name: "header-row",
-        props: {
-            settings: {
-                export_columns: [],
-            },
-            fieldname: '',
-        },
-    }
+export default {
+  name: 'header-row',
+  props: {
+    settings: {
+      export_columns: [],
+    },
+    fieldname: '',
+  },
+};
 </script>
-

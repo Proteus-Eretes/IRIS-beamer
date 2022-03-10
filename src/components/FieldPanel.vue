@@ -12,37 +12,37 @@
 </template>
 
 <script>
-    import {Crew} from "../helpers/Crew.js";
+import { Crew } from '../helpers/Crew.js';
 
-    export default {
-        name: 'field-panel',
-        props: {
-            settings: {
-                export_columns: [],
-            },
-            field: {
-                crews: {
-                    teams: []
-                }
-            },
-        },
-        methods: {
-            getCrewField(crew, column) {
-                return Crew.getCrewField(crew, column);
-            },
-            getCrewRank(crew) {
-                return Crew.getCrewRank(crew);
-            },
-            getWinnerClass(crew) {
-                if (crew.times[crew.times.length - 1].rank === 1) {
-                    return 'winner';
-                }
-                if (crew.times[crew.times.length - 1].subrank === 1) {
-                    return 'sub-winner';
-                }
-            }
-        }
-    }
+export default {
+  name: 'field-panel',
+  props: {
+    settings: {
+      export_columns: [],
+    },
+    field: {
+      crews: {
+        teams: [],
+      },
+    },
+  },
+  methods: {
+    getCrewField(crew, column) {
+      return Crew.getCrewField(crew, column);
+    },
+    getCrewRank(crew) {
+      return Crew.getCrewRank(crew);
+    },
+    getWinnerClass(crew) {
+      if (crew.times[crew.times.length - 1].rank === 1) {
+        return 'winner';
+      }
+      if (crew.times[crew.times.length - 1].subrank === 1) {
+        return 'sub-winner';
+      }
+    },
+  },
+};
 </script>
 <style>
     .winner {

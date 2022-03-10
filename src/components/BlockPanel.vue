@@ -63,113 +63,113 @@ import { ResultStatus } from '../helpers/ResultStatus';
 import { Crew } from '../helpers/Crew';
 
 export default {
-    components: {
-        ProgressBar,
-        HeaderRow,
-        FieldPanel,
+  components: {
+    ProgressBar,
+    HeaderRow,
+    FieldPanel,
+  },
+  name: 'block-panel',
+  props: {
+    settings: {
+      export_columns: [],
     },
-    name: 'block-panel',
-    props: {
-        settings: {
-            export_columns: [],
-        },
-        regatta: {},
-        panelType: String,
+    regatta: {},
+    panelType: String,
+  },
+  data() {
+    const url = new ParseParams(window.location.href);
+    return {
+      fields: {},
+      resultService: new ResultService(
+        url.getKey(),
+        url.getUrl(),
+        this.regatta.id,
+        this.settings.id,
+        this.panelType,
+      ),
+    };
+  },
+  methods: {
+    async refreshData() {
+      if (this.panelType !== 'last') {
+        try {
+          const blocks = await this.resultService.update();
+          this.updateFields(blocks);
+        } catch (e) {
+          console.log(e);
+          this.updateFields(this.resultService.getLastRegattaData());
+          return false;
+        }
+      } else {
+        try {
+          this.fields = await this.resultService.getUpdatedLastResults();
+        } catch (e) {
+          this.fields = this.resultService.getLastResults();
+          return false;
+        }
+      }
+      return true;
     },
-    data() {
-        const url = new ParseParams(window.location.href);
-        return {
-            fields: {},
-            resultService: new ResultService(
-                url.getKey(),
-                url.getUrl(),
-                this.regatta.id,
-                this.settings.id,
-                this.panelType,
-            ),
-        };
-    },
-    methods: {
-        async refreshData() {
-            if (this.panelType !== 'last') {
-                try {
-                    const blocks = await this.resultService.update();
-                    this.updateFields(blocks);
-                } catch (e) {
-                    console.log(e);
-                    this.updateFields(this.resultService.getLastRegattaData());
-                    return false;
-                }
-            } else {
-                try {
-                    this.fields = await this.resultService.getUpdatedLastResults();
-                } catch (e) {
-                    this.fields = this.resultService.getLastResults();
-                    return false;
-                }
+    updateFields(blocks) {
+      if (this.panelType === 'all') {
+        this.fields = this.resultService.getNextPage(blocks, this._rows());
+      } else if (this.panelType === 'block') {
+        const lastBlock = blocks.reduce((block, testBlock) => {
+          const startMoment = moment(`${testBlock[0].daydate} ${testBlock[0].starttime}`)
+            .unix();
+          const currentMoment = moment()
+            .unix();
+          const startMomentBlock = moment(`${block[0].daydate} ${block[0].starttime}`)
+            .unix();
+          if (currentMoment - startMoment > 0) { // testBlock has begun
+            if (currentMoment - startMomentBlock > 0) { // Block has begun
+              if (startMomentBlock - startMoment > 0) {
+                return block;
+              }
+              return testBlock;
             }
-            return true;
-        },
-        updateFields(blocks) {
-            if (this.panelType === 'all') {
-                this.fields = this.resultService.getNextPage(blocks, this._rows());
-            } else if (this.panelType === 'block') {
-                const lastBlock = blocks.reduce((block, testBlock) => {
-                    const startMoment = moment(`${testBlock[0].daydate} ${testBlock[0].starttime}`)
-                        .unix();
-                    const currentMoment = moment()
-                        .unix();
-                    const startMomentBlock = moment(`${block[0].daydate} ${block[0].starttime}`)
-                        .unix();
-                    if (currentMoment - startMoment > 0) { // testBlock has begun
-                        if (currentMoment - startMomentBlock > 0) { // Block has begun
-                            if (startMomentBlock - startMoment > 0) {
-                                return block;
-                            }
-                            return testBlock;
-                        }
-                        return testBlock;
-                    }
-                    return block;
-                });
-                this.fields = this.resultService.getNextPage([lastBlock], this._rows());
-            } else if (this.panelType === 'day') {
-                const lastBlocks = blocks
-                    .filter(block => (moment(block[0].daydate)
-                    .isSame(moment(), 'd')));
-                this.fields = this.resultService.getNextPage(lastBlocks, this._rows());
-            }
-        },
-        getTime(crew) {
-            if (ResultStatus.isValid(+crew.status)) {
-                return Crew.formatTime(crew.totaltime + crew.bonussecond);
-            }
-            return ResultStatus.getLabel(+crew.status);
-        },
-        _rows() {
-            const height = (window.innerHeight - document.getElementsByClassName('beamer-title')[0].offsetHeight - document.getElementsByTagName('footer')[0].offsetHeight);
-            return Math.floor(height / 51) - 1;
-        },
+            return testBlock;
+          }
+          return block;
+        });
+        this.fields = this.resultService.getNextPage([lastBlock], this._rows());
+      } else if (this.panelType === 'day') {
+        const lastBlocks = blocks
+          .filter(block => (moment(block[0].daydate)
+            .isSame(moment(), 'd')));
+        this.fields = this.resultService.getNextPage(lastBlocks, this._rows());
+      }
     },
-    async mounted() {
-        let blocks = await this.resultService.update();
-        this.updateFields(blocks);
-        this.$refs.topProgress.start();
+    getTime(crew) {
+      if (ResultStatus.isValid(+crew.status)) {
+        return Crew.formatTime(crew.totaltime + crew.bonussecond);
+      }
+      return ResultStatus.getLabel(+crew.status);
     },
-    computed: {
-        colspan() {
-            return 1 + this.settings.export_columns.length;
-        },
-        displayTitle() {
-            switch (this.panelType) {
-                case 'all':
-                    return 'Volledige wedstrijd';
-                case 'block':
-                    return 'Huidig block';
-                case 'day':
-                    return 'Huidig dag';
-            }
-        },
+    _rows() {
+      const height = (window.innerHeight - document.getElementsByClassName('beamer-title')[0].offsetHeight - document.getElementsByTagName('footer')[0].offsetHeight);
+      return Math.floor(height / 51) - 1;
     },
+  },
+  async mounted() {
+    const blocks = await this.resultService.update();
+    this.updateFields(blocks);
+    this.$refs.topProgress.start();
+  },
+  computed: {
+    colspan() {
+      return 1 + this.settings.export_columns.length;
+    },
+    displayTitle() {
+      switch (this.panelType) {
+        case 'all':
+          return 'Volledige wedstrijd';
+        case 'block':
+          return 'Huidig block';
+        case 'day':
+          return 'Huidig dag';
+      }
+    },
+  },
 };
 </script>

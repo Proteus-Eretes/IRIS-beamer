@@ -1,5 +1,5 @@
+import moment from 'moment';
 import { Service } from './Service';
-import moment from "moment";
 
 export class ResultService extends Service {
   /**
@@ -58,7 +58,7 @@ export class ResultService extends Service {
       this._blockIndex = 0;
       this._fieldIndex = 0;
       if (this.panelType === 'day') {
-        this._blockIndex = this._current_day_block_ids.findIndex((block) => block.today);
+        this._blockIndex = this._current_day_block_ids.findIndex(block => block.today);
       }
       if (this.panelType === 'block') {
         this._get_last_started_block();
@@ -74,12 +74,10 @@ export class ResultService extends Service {
         do {
           this._get_next_block_idx();
         } while (!this._current_day_block_ids[this._blockIndex].today);
-      } else if (this.panelType === 'block')  {
+      } else if (this.panelType === 'block') {
         this._get_last_started_block();
-      } else {
-        if (++this._blockIndex === this.blocks.length) {
-          this._blockIndex = 0;
-        }
+      } else if (++this._blockIndex === this.blocks.length) {
+        this._blockIndex = 0;
       }
     }
     return regattaData;
@@ -87,7 +85,7 @@ export class ResultService extends Service {
 
   _get_next_block_idx() {
     if (++this._blockIndex === this.blocks.length) {
-      this._blockIndex = this._current_day_block_ids.findIndex((block) => block.today);
+      this._blockIndex = this._current_day_block_ids.findIndex(block => block.today);
     }
   }
 
@@ -146,7 +144,7 @@ export class ResultService extends Service {
         this.fields[this.fields.length - 1].forEach((field) => {
           if (count < this.beginCount) {
             if (count + field.crewCount > this.beginCount) { // Have to start halfway in this field
-              field.crews.teams.splice(0, this.beginCount - count); //Remove crews from start if field is shown on previous page.
+              field.crews.teams.splice(0, this.beginCount - count); // Remove crews from start if field is shown on previous page.
             } else if (field.crewCount) { // Already shown this field so don't show it again
               count += field.crewCount;
               field.crews.teams.length = 0;
@@ -154,7 +152,7 @@ export class ResultService extends Service {
             }
           }
           if ((count + fieldCount > this.endCount) && field.crewCount) { // These fields will not fit so reduce the count by one
-						fieldCount--;
+            fieldCount--;
           }
           count += field.crewCount;
           if (field.crewCount) {

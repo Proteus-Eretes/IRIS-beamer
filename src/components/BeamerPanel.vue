@@ -8,23 +8,22 @@
 </template>
 
 <script>
-    import BlockPanel from "./BlockPanel";
+import BlockPanel from './BlockPanel';
 
-    export default {
-        components: {BlockPanel},
-        name: 'BeamerPanel',
-        props: {
-            settings: {
-                export_columns: [],
-            },
-            regatta: {},
-            panels: Array,
-        },
-        computed: {
-            panelWidth() {
-                return 'col-' + (12 / this.panels.length);
-            }
-        }
-    }
+export default {
+  components: { BlockPanel },
+  name: 'BeamerPanel',
+  props: {
+    settings: {
+      export_columns: [],
+    },
+    regatta: {},
+    panels: Array,
+  },
+  computed: {
+    panelWidth() {
+      return `col-${12 / this.panels.length}`;
+    },
+  },
+};
 </script>
-
