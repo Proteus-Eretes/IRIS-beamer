@@ -1,4 +1,5 @@
 import { Service } from './Service';
+import moment from "moment";
 
 export class ResultService extends Service {
   /**
@@ -6,7 +7,7 @@ export class ResultService extends Service {
 	 * @param {string} regattaId
 	 * @param {string} presetId
 	 */
-  constructor(key, baseUrl, regattaId, presetId) {
+  constructor(key, baseUrl, regattaId, presetId, panelType) {
     super(key, baseUrl);
     this.regattaId = regattaId;
     this.presetId = presetId;
@@ -18,6 +19,7 @@ export class ResultService extends Service {
     this._fieldIndex = null;
     this._blockIndex = null;
     this.blocks = null;
+    this.panelType = panelType;
   }
 
   /**
@@ -42,10 +44,25 @@ export class ResultService extends Service {
   async update() {
     if (this.regatta === null) {
       const regatta = await this._initRegatta();
+      const r = JSON.parse(JSON.stringify(regatta.regatta));
       this.regatta = JSON.stringify(regatta.regatta);
-      this.blocks = JSON.parse(JSON.stringify(regatta.regatta));
+      this.blocks = r;
+      this._current_day_block_ids = r
+        .map((block, idx) => ({
+          id: block[0].blockid,
+          block_index: idx,
+          today: moment(block[0].daydate).isSame(moment(), 'd'),
+          block_num: block[0].blocknumber,
+          startTime: moment(`${block[0].daydate} ${block[0].starttime}`).unix(),
+        }));
       this._blockIndex = 0;
       this._fieldIndex = 0;
+      if (this.panelType === 'day') {
+        this._blockIndex = this._current_day_block_ids.findIndex((block) => block.today);
+      }
+      if (this.panelType === 'block') {
+        this._get_last_started_block();
+      }
     }
     const data = await this._update();
     const regattaData = JSON.parse(this.regatta);
@@ -53,11 +70,35 @@ export class ResultService extends Service {
     this.regatta = JSON.stringify(regattaData);
     if (++this._fieldIndex === this.blocks[this._blockIndex].length) {
       this._fieldIndex = 0;
-      if (++this._blockIndex === this.blocks.length) {
-        this._blockIndex = 0;
+      if (this.panelType === 'day') {
+        do {
+          this._get_next_block_idx();
+        } while (!this._current_day_block_ids[this._blockIndex].today);
+      } else if (this.panelType === 'block')  {
+        this._get_last_started_block();
+      } else {
+        if (++this._blockIndex === this.blocks.length) {
+          this._blockIndex = 0;
+        }
       }
     }
     return regattaData;
+  }
+
+  _get_next_block_idx() {
+    if (++this._blockIndex === this.blocks.length) {
+      this._blockIndex = this._current_day_block_ids.findIndex((block) => block.today);
+    }
+  }
+
+  _get_last_started_block() {
+    const data = this._current_day_block_ids.map((block, idx) => ({
+      block_index: idx,
+      block_num: block.block_num,
+      time_since_stared: moment().unix() - block.startTime,
+    }));
+    data.sort((a, b) => a.time_since_stared - b.time_since_stared);
+    this._blockIndex = data[0].block_index;
   }
 
   getLastRegattaData() {

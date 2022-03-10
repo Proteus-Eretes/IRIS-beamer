@@ -80,7 +80,13 @@ export default {
         const url = new ParseParams(window.location.href);
         return {
             fields: {},
-            resultService: new ResultService(url.getKey(), url.getUrl(), this.regatta.id, this.settings.id),
+            resultService: new ResultService(
+                url.getKey(),
+                url.getUrl(),
+                this.regatta.id,
+                this.settings.id,
+                this.panelType,
+            ),
         };
     },
     methods: {
