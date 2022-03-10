@@ -91,7 +91,7 @@ export class ResultService extends Service {
       block = block.map((field) => {
         if (field.crews) {
           field.crewCount = field.crews.teams.length;
-				} else {
+        } else {
           field.crewCount = 0;
         }
         return field;

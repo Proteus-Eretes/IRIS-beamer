@@ -128,7 +128,8 @@ export default {
                 });
                 this.fields = this.resultService.getNextPage([lastBlock], this._rows());
             } else if (this.panelType === 'day') {
-                const lastBlocks = blocks.filter(block => (moment(block[0].daydate)
+                const lastBlocks = blocks
+                    .filter(block => (moment(block[0].daydate)
                     .isSame(moment(), 'd')));
                 this.fields = this.resultService.getNextPage(lastBlocks, this._rows());
             }
@@ -145,7 +146,7 @@ export default {
         },
     },
     async mounted() {
-        const blocks = await this.resultService.update();
+        let blocks = await this.resultService.update();
         this.updateFields(blocks);
         this.$refs.topProgress.start();
     },
