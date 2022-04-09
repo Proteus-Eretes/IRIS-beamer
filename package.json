@@ -12,7 +12,7 @@
     "@vue/cli": "^3.8.2",
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.0.4",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "shipit-cli": "^4.2.0",
     "shipit-deploy": "^4.1.4",
     "vue": "^2.6.10",
